@@ -24,37 +24,39 @@ type NodePath = Array<number>;
 
 interface TNode {
 
-    data: KnownType;
-    name: string;
-    parent: TNode;
-
-    root: TNode;
-    view:TreeViewProps;
-    isRoot: boolean;
-    index: number;  // its index in the parent children array
-    level: number;
-    id:string; // literal flattening of the object accessor eg key1.ch2.0
-    children: TNodes;
-    //expanded: boolean;
+    data   : KnownType;
+    name   : string;
+    parent : TNode;
+    root   : TNode;
+    view   : TreeViewProps;
+    isRoot : boolean;
+    index  : number;  // its index in the parent children array
+    level  : number;
+    id     : string; // literal flattening of the object accessor eg key1.ch2.0
+    
+    children   : TNodes;
+    //expanded : boolean;
     // moved into treeviewprops as we are likely to save that tree
     // and put into a store
+    editing: number;
 
-    editing:number;
-    addChild(node: TNode): void;
-    addChildren(nodes: TNodes): void;
-    child(index: number): TNode;
+    addChild	(node: TNode): void;
+    addChildren	(nodes: TNodes): void;
+    child	(index: number): TNode;
+    
     // data(column: number): unknown;
-    insertChild(index: number, node: TNode): boolean;
-    insertChildren(index: number, nodes: TNodes): boolean;
-    takeChild(index: number): TNode;
-    takeChildren(index: number, count: number): TNodes;
-    // see getter and setters
-    isEnabled(): boolean;
-    isSelected(): boolean;
-    isHidden(): boolean;
-    setEnabled(b: boolean): void;
-    setSelected(b: boolean): void;
-    setHidden(b: boolean): void;
+    insertChild		(index: number, node: TNode): boolean;
+    insertChildren	(index: number, nodes: TNodes): boolean;
+    takeChildren	(index: number, count: number): TNodes;
+    takeChild		(index: number): TNode;
+    
+    // See getter and setters
+    isEnabled	(): boolean;
+    isSelected	(): boolean;
+    isHidden	(): boolean;
+    setEnabled	(b: boolean): void;
+    setSelected	(b: boolean): void;
+    setHidden	(b: boolean): void;
     //sortChildren(s: SortOrder): void;
 }
 
@@ -79,12 +81,12 @@ export function dumpExpansion(n:TNode):TreeDumpedProps {
 }
 
 type TreeModel = {
-    parent?: TNode | null,
-    name:string,  // should be key //todo
-    data?: KnownType, // should be value
-    level?: Number,
-    root?: TNode,
-    expanded?:boolean // debug purpose
+    parent?	: TNode | null,
+    name	: string,  // should be key //todo
+    data?	: KnownType, // should be value
+    level?	: Number,
+    root?	: TNode,
+    expanded?	: boolean // debug purpose
 }
 
 class TreeView implements TNode
@@ -94,19 +96,19 @@ class TreeView implements TNode
         name: null
     }
 
-    name: string;
-    isRoot: boolean;
-    editing: 0|1|2;
-    private _selected: boolean;
-    private _hidden: boolean;
-    parent: TNode;
-    root: TNode;
-    data:KnownType;
-    view:TreeViewProps; // extra props relative to the view can  be saved
-    //private _data: KnownType;
-    index: number = 0;
-    level: number = 0;
-    //expanded: boolean;
+    name                : string;
+    isRoot              : boolean;
+    editing             : 0|1|2;
+    private _selected   : boolean;
+    private _hidden     : boolean;
+    parent              : TNode;
+    root                : TNode;
+    data                : KnownType;
+    view                : TreeViewProps; // extra props relative to the view can  be saved
+    //private _data     : KnownType;
+    index               : number = 0;
+    level               : number = 0;
+    //expanded          : boolean;
 
     id: string;
     static getId(n:TNode):string {
@@ -157,17 +159,16 @@ class TreeView implements TNode
     }
 
     private _enabled: boolean;
-    get enabled() { return this._enabled; }
-    set enabled(e: boolean) { this._enabled = e; }
-    isEnabled(): boolean { return this._enabled; }
-    isSelected(): boolean { return this._selected; }
-    isHidden(): boolean { return this._hidden; }
+    get enabled	(): boolean { return this._enabled; }
+    set enabled	(e: boolean) { this._enabled = e; }
+    isEnabled	(): boolean { return this._enabled; }
+    isSelected	(): boolean { return this._selected; }
+    isHidden	(): boolean { return this._hidden; }
+    hasChildren	(): boolean {return this.children && this.children.length > 0 }
 
-    hasChildren():boolean {return this.children && this.children.length > 0 }
-
-    setEnabled(b: boolean): void {  this._enabled = b; }
-    setSelected(b: boolean): void { this._selected = b; }
-    setHidden(b: boolean): void { this._hidden = b; }
+    setEnabled	(b: boolean): void {  this._enabled = b; }
+    setSelected	(b: boolean): void { this._selected = b; }
+    setHidden	(b: boolean): void { this._hidden = b; }
 
     sortChildren(
         fn: ((a: TNode, b: TNode) => number),
@@ -235,10 +236,7 @@ class TreeView implements TNode
             TreeView.reaffectViewProps(n, tree.view[n.name])
         })
     }
-
-
 }
-
 
 
 function descent(node: TNode, n: NodePath): [boolean, TNode, number] {
