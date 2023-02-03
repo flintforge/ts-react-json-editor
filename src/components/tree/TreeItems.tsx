@@ -12,10 +12,10 @@
 import {h, Component} from 'preact';
 import {useReducer} from "preact/hooks";
 import  AutosizeInput from 'react-input-autosize'
-import {KnownType, TNode, TreeView} from "./TreeView";
 import {Theme, UndoStack} from 'main/App'
-import {blinkClass} from "lib/classes";
+import {KnownType, TNode, TreeView} from "./TreeView";
 import  'styles/tree.sass'
+import {blinkClass} from "lib/classes";
 
 /**
  * for huge trees
@@ -43,9 +43,9 @@ const ACCOLADE = '{}'
 const BRACE = '[]'
 
 interface ItemState {
-    expanded?:boolean,
-    name:string,
-    editingName:boolean,
+    name	: string,
+    expanded?	: boolean,
+    editingName	: boolean,
 }
 
 interface ObjectState {
@@ -71,8 +71,8 @@ type ItemAction = {
 
 
 interface ItemValueState {
-    value:KnownType,
-    editingValue:boolean,
+    value: KnownType,
+    editingValue: boolean,
 }
 
 type ObjectItemValueState = ItemValueState & ObjectState;
@@ -90,13 +90,13 @@ interface NodeProps {
 }
 
 interface ObjectItemProps extends NodeProps {
-    brace:string;
-    addon?:string;
+    brace  : string;
+    addon? : string;
 }
 
 interface LabelState {
-    name:string;
-    editing:boolean
+    name    : string;
+    editing : boolean
 }
 
 /*
@@ -255,8 +255,8 @@ class ObjectItem extends Component<ObjectItemProps> {
     render = ({_, brace, addon}:ObjectItemProps, {}) => {
         //console.log(_.getId(),brace,addon)
         const initialState = {
-            expanded: _.view?.expanded,
             name: _.name,
+            expanded: _.view?.expanded,
             editingName: false,
         };
 
@@ -550,12 +550,12 @@ const ObjectType =(x:object)=> {
 * */
 
 const ItemRenderer = {
-    "boolean": BooleanNodeItem,
-    "string": StringNodeItem,
-    "number": NumberNodeItem,
-    "object": ObjectNodeItem,
-    "undefined": UndefinedNodeItem,
-    "function": FunctionNodeItem,
+    "boolean"	: BooleanNodeItem,
+    "string"	: StringNodeItem,
+    "number"	: NumberNodeItem,
+    "object"	: ObjectNodeItem,
+    "undefined"	: UndefinedNodeItem,
+    "function"	: FunctionNodeItem,
 }
 
 const SelectItemRenderer =(x:KnownType)=>
