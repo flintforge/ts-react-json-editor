@@ -1,0 +1,36 @@
+{
+	"compilerOptions": {
+		"typeRoots": [
+		  "./src/types"
+		],
+		"removeComments": false,
+		"preserveConstEnums": true,
+		"sourceMap": true,
+		"suppressImplicitAnyIndexErrors": true,
+		"allowSyntheticDefaultImports": true,
+		"strictNullChecks": true,
+		"noUnusedLocals": false,
+		"noImplicitThis": true,
+		"noImplicitAny": true,
+		"moduleResolution": "node",
+		"noEmitOnError": true,
+		"module": "es6",
+		"target": "es6",
+		"jsx": "react",
+		"jsxFactory": "h",
+		"jsxFragmentFactory": "h",
+		"baseUrl": "./src",
+		"paths": {
+			"lib/*": ["lib/*"],
+		}
+	},
+	"include": ["src","src/components"],
+	"exclude": ["node_modules", "**/*.spec.ts", "out"],
+
+
+	// This is opinionated for me. Change it as per your wish. (Don't Forget to change tslint config as well)
+	"formatCodeOptions": {
+		"indentSize": 4,
+		"tabSize": 4
+	}
+}
