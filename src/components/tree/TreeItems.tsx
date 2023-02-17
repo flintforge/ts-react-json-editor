@@ -12,7 +12,7 @@
 import {h, Component} from 'preact';
 import {useReducer} from "preact/hooks";
 import  AutosizeInput from 'react-input-autosize'
-import {Theme, UndoStack} from 'main/App'
+import {Theme, UndoStack} from 'App'
 import {KnownType, TNode, TreeView} from "./TreeView";
 import  'styles/tree.sass'
 import {blinkClass} from "lib/classes";
@@ -147,6 +147,7 @@ class TreeItemLabel extends Component<NodeProps,{}> {
                         return {...s, name: action.payload, editing: true};
                 }
             }
+
             switch (action) {
 
                 case OIA.validateName: /** todo  if it's an array
@@ -190,6 +191,7 @@ class TreeItemLabel extends Component<NodeProps,{}> {
                     }
 
                 case OIA.editName:
+                    //console.log("editing")
                     return {...s, editingName: true};
 
                 case OIA.cancel: // back
@@ -207,12 +209,12 @@ class TreeItemLabel extends Component<NodeProps,{}> {
             <div class={`object-key ${editingName ? 'editing' : ''}`}
 
                  onClick={() => { // on double click. use click for dnd
+                     console.log("editing")
                      dispatch(OIA.editName)
                      UndoStack.push(()=>dispatch(OIA.editName))
                  }}>
                 {
-                    editingName
-                        ? <AutosizeInput
+                    editingName ? <AutosizeInput
                             spellCheck="false"
                             inputStyle={{
                                 fontFamily: 'monospace',
@@ -403,7 +405,6 @@ class TreeItemValue extends Component<NodeProps & HasClassName> {
                     return {...s, value:_.data, editingValue: false};
 
                 default:
-                    console.log(action)
                     throw new Error('Unexpected action ');
             }
         };
