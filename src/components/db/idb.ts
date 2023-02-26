@@ -1,10 +1,12 @@
-import { IDBPDatabase, openDB } from 'idb';
+import {IDBPCursorWithValue, IDBPDatabase, openDB} from 'idb';
+import {Func} from "idb/build/util";
 
 type ID = number
 
+
 class IndexedDb {
     private readonly database: string;
-    db:  IDBPDatabase;
+    db: IDBPDatabase;
 
     constructor(database: string) {
         this.database = database;
@@ -18,8 +20,10 @@ class IndexedDb {
                         if (db.objectStoreNames.contains(collection)) {
                             continue;
                         }
-                        db.createObjectStore(collection, { autoIncrement: true, keyPath: 'id' });
+                        let col = db.createObjectStore(collection, {autoIncrement: true, keyPath: 'id'});
+                        col.createIndex('name', 'name', { unique: false })
                     }
+
                 },
             });
         } catch (error) {
@@ -27,7 +31,20 @@ class IndexedDb {
         }
     }
 
-    public async get(collection: string, id: number):Promise<object> {
+    async addCollection(collection: string) {
+        try {
+            await openDB(this.database, 1, {
+                upgrade(db: IDBPDatabase) {
+                    db.createObjectStore(collection, {autoIncrement: true, keyPath: 'id'});
+                    console.log("ok, collection created")
+                }
+            });
+        } catch (error) {
+            return false;
+        }
+    }
+
+    public async get(collection: string, id: number): Promise<object> {
         const tx = this.db.transaction(collection, 'readonly');
         const store = tx.objectStore(collection);
         const result = await store.get(id);
@@ -35,7 +52,7 @@ class IndexedDb {
         return result;
     }
 
-    public async getAll(collection: string):Promise<object[]> {
+    public async getAll(collection: string): Promise<object[]> {
         const tx = this.db.transaction(collection, 'readonly');
         const store = tx.objectStore(collection);
         const result = await store.getAll();
@@ -61,7 +78,7 @@ class IndexedDb {
         return this.getAll(collection);
     }
 
-    public async delete(collection: string, id: number):Promise<ID> {
+    public async delete(collection: string, id: number): Promise<ID> {
         const tx = this.db.transaction(collection, 'readwrite');
         const store = tx.objectStore(collection);
         const result = await store.get(id);
@@ -74,9 +91,49 @@ class IndexedDb {
         return id;
     }
 
-    public async clear(collection:string) {
+    public async clear(collection: string) {
         await this.db.clear(collection)
+        console.log("ok, clear")
+    }
+
+    public async cursor(collection: string) {
+        const tx = this.db.transaction(collection, 'readonly')
+        const store = tx.objectStore(collection)
+        return store.openCursor()
+    }
+
+//Iterating on a subset of the items using bounds and cursors
+
+    public searchItems(collection: string, field: string, lower: string | number, upper: string | number, callback: Func) {
+
+        if (lower === '' && upper === '') {
+            return
+        }
+
+        let range = (lower !== '' && upper !== '')
+            ? IDBKeyRange.bound(lower, upper)
+            : (lower === '')
+                ? IDBKeyRange.upperBound(upper)
+                : IDBKeyRange.lowerBound(lower)
+
+        const tx = this.db.transaction(collection, 'readonly')
+        const store = tx.objectStore(collection)
+        const index = store.index(field)
+
+        index.openCursor(range)
+            .then(
+                async function showRange(cursor):Promise<object|undefined> {
+                    if (!cursor) { return }
+                    for (const field in cursor.value) {
+                        callback(cursor.value[field])
+                    }
+                    return cursor.continue().then(showRange)
+                })
+            .then(() => {
+                console.log('done!')
+            })
     }
 }
+
 
 export default IndexedDb;
