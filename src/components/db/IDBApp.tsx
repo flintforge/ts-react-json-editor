@@ -11,10 +11,10 @@ const Test = ({dbname="dialoguea", collection}:{dbname?:string, collection:strin
         const testIndexDb = async () => {
             const idxdb = new IndexedDb(dbname);
             await idxdb.createObjectStore([collection]);
-            await idxdb.insert(collection, {name: 'A Game of Thrones'});
+            await idxdb.insert(collection, {name: 'x'});
             await idxdb.insertMany(collection, [
-                {name: 'A Song of Fire and Ice'},
-                {name: 'Harry Potter and the Chamber of Secrets'}]);
+                {name: 'y'},
+                {name: 'z'}]);
             await idxdb.get(collection, 1);
             await idxdb.getAll(collection);
             //await idxdb.delete(collection, 1);
@@ -23,7 +23,6 @@ const Test = ({dbname="dialoguea", collection}:{dbname?:string, collection:strin
     }, []);
     return <></>
 }
-
 
 
 export const IDBApp = ({dbname}: { dbname: string }) => {
@@ -45,15 +44,15 @@ export const IDBApp = ({dbname}: { dbname: string }) => {
                     }
                 }}/>
             Insert:
-            <input
+            <textarea
                 onKeyPress={async e => {
                     if (e.key == "Enter") {
                         console.log(JSON.parse(JSON.stringify(
-                            (e.target as HTMLInputElement).value)))
+                            (e.target as HTMLTextAreaElement).value)))
                         await idxdb.insert(
                             collection,
                             JSON.parse(JSON.stringify(
-                                (e.target as HTMLInputElement).value)))
+                                (e.target as HTMLTextAreaElement).value)))
                     }
                 }}/>
             Query:
@@ -74,11 +73,10 @@ export const IDBApp = ({dbname}: { dbname: string }) => {
                     }
                 }}/>
 
-
             <button
                 value="clear"
                 onClick={async () => {
-                    //idxdb.
+                    await idxdb.clear(collection)
                 }}>Clear
             </button>
         </>
